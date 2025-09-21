@@ -100,8 +100,7 @@ async def generate_email_and_get_messages() -> None:
     Initialize the async generator, produce an email and fetch messages.
     """
     generator = await AsyncEmailGenerator()
-    email_list = await generator.generate_email()
-    email = email_list[0]
+    email = await generator.generate_email()
     messages = await generator.get_messages(email)
     print(f"Email: {email}\nMessages: {messages}")
 
