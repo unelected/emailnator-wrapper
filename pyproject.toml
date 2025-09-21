@@ -3,7 +3,7 @@ requires = ["setuptools >= 80"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = ""
+name = "emailnator-wrapper"
 dynamic = ["version", "readme"]
 keywords = ["email generator", "emailnator", "gmailnator", "gmail generator"]
 description = "A Python wrapper for the Emailnator service providing both synchronous and asynchronous APIs."
@@ -37,5 +37,5 @@ where = ["src"]
 [tool.setuptools.package-data]
 "emailnator.config" = ["*.yaml"]
 [tool.setuptools.dynamic]
-version = { attr = "gmail_generator.version.__version__" }
+version = { attr = "emailnator.version.__version__" }
 readme = {file = "README.md", content-type = "text/markdown"}
