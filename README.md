@@ -1,4 +1,4 @@
-# emailnator\-generator
+# emailnator\-wrapper
 
 Asynchronous and synchronous API wrapper for **EmailNator**.
 Provides a small, well-typed SDK to generate temporary Gmail-style addresses and read incoming messages. Designed for both script usage and integration into larger automation/test suites.
@@ -31,16 +31,14 @@ Provides a small, well-typed SDK to generate temporary Gmail-style addresses and
 ## Installation
 
 ```bash
-pip install .
-# or in editable mode for development
-pip install -e .
+pip install pip install email-wrapper
 ```
 
 ---
 
 ## Configuration
 
-`gmail_generator/config/config.yaml` (example):
+`emailnator/config/config.yaml` (example):
 
 ```yaml
 BASE_URL: https://www.emailnator.com
@@ -94,7 +92,7 @@ This script demonstrates:
 """
 import asyncio
 
-from gmail_generator.asyncio.email_generator import AsyncEmailGenerator
+from emailnator.asyncio.email_generator import AsyncEmailGenerator
 
 
 async def generate_email_and_get_messages() -> None:
@@ -143,7 +141,7 @@ Synchronous example using EmailGenerator wrapper.
 This demonstrates creating the blocking wrapper and using it to generate
 an email and retrieve messages in a non-async program.
 """
-from gmail_generator.sync.email_generator import EmailGenerator
+from emailnator.sync.email_generator import EmailGenerator
 
 def main() -> None:
     gen = EmailGenerator()
@@ -161,22 +159,22 @@ if __name__ == "__main__":
 
 ## Public API overview
 
-* `gmail_generator.asyncio.email_generator.AsyncEmailGenerator`
+* `emailnator.asyncio.email_generator.AsyncEmailGenerator`
   High-level async facade. Use `await AsyncEmailGenerator()` (if metaclass used) or `await AsyncEmailGenerator.create()`.
 
-* `gmail_generator.asyncio.generators.Generators`
+* `emailnator.asyncio.generators.Generators`
   Endpoint wrapper for `/generate-email`. Provides `generate_email()` and `generate_bulk_emails()`.
 
-* `gmail_generator.asyncio.message_getter.MessageGetter`
+* `emailnator.asyncio.message_getter.MessageGetter`
   Fetch and parse messages for a given temporary email address.
 
-* `gmail_generator.asyncio.builders.AsyncEmailnatorClient`
+* `emailnator.asyncio.builders.AsyncEmailnatorClient`
   HTTP client singleton (uses `AsyncSingletonMeta`). Exposes `get_client()`, `get_headers()`, `refresh_token()`.
 
-* `gmail_generator.security.xsrf_manager.XsrfManager`
+* `emailnator.asyncio.builders.helpers.xsrf_token_service.XsrfManager`
   Encapsulates XSRF lifecycle: `ensure_token()`, `refresh()`, `get_token()`, `get_headers()`.
 
-* `gmail_generator.config.config`
+* `emailnator.config.config`
   Loads `config.yaml` to `config` object with attributes `BASE_URL`, `TIMEOUT`, `USE_HTTP2`, `USER_AGENT`, `GMAIL_CONFIG`, `PROXY`.
 
 ---
@@ -218,7 +216,7 @@ This project is licensed under GNU Affero General Public License v3 (AGPL-3.0).
 
 * `README.md` (this file)
 * `pyproject.toml` / `setup.cfg` with dependencies and dev extras
-* `gmail_generator/config/config.yaml` example
+* `emailnator/config/config.yaml` example
 * `examples/async_example.py`
 * `examples/sync_example.py`
 * `tests/` with unit & async tests

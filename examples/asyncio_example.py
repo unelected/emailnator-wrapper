@@ -34,7 +34,7 @@ Typical output:
 """
 import asyncio
 
-from gmail_generator.asyncio.email_generator import AsyncEmailGenerator
+from emailnator.asyncio.email_generator import AsyncEmailGenerator
 
 
 async def generate_email_and_get_messages():
