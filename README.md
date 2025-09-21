@@ -31,7 +31,7 @@ Provides a small, well-typed SDK to generate temporary Gmail-style addresses and
 ## Installation
 
 ```bash
-pip install pip install email-wrapper
+pip install email-wrapper
 ```
 
 ---
@@ -153,14 +153,12 @@ if __name__ == "__main__":
     main()
 ```
 
-> Prefer `EmailGenerator.create()` (factory) over direct construction to avoid mixing event loop setups in environments that already run an event loop.
-
 ---
 
 ## Public API overview
 
 * `emailnator.asyncio.email_generator.AsyncEmailGenerator`
-  High-level async facade. Use `await AsyncEmailGenerator()` (if metaclass used) or `await AsyncEmailGenerator.create()`.
+  High-level async facade. Use `await AsyncEmailGenerator()`.
 
 * `emailnator.asyncio.generators.Generators`
   Endpoint wrapper for `/generate-email`. Provides `generate_email()` and `generate_bulk_emails()`.
