@@ -1,4 +1,4 @@
-# email\_generator
+# emailnator\-generator
 
 Asynchronous and synchronous API wrapper for **EmailNator**.
 Provides a small, well-typed SDK to generate temporary Gmail-style addresses and read incoming messages. Designed for both script usage and integration into larger automation/test suites.
