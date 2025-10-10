@@ -43,6 +43,13 @@ dependencies = [
   "pyyaml~=6.0.2"
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=1.0",
+    "coverage",
+]
+
 [project.urls]
 Homepage = "https://github.com/unelected/emailnator-wrapper"
 Repository = "https://github.com/unelected/emailnator-wrapper.git"
