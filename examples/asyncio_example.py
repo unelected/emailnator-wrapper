@@ -54,12 +54,12 @@ async def generate_email_and_get_messages():
     email: str = await generator.generate_email()
     messages: list[dict] = await generator.get_messages(email)
     print(f"Email: {email}\n Messages: {messages}")
-    needed_message = messages[0]
-    message_id = needed_message["messageID"]
-    print(message_id)
-    message = await generator.get_message(email, message_id)
-    print(message)
-    print("Don't worry, if message is 'Server Error' that's normal")
+    needed_message_id = await generator.parse_message_from_sender(messages, "AI TOOLS")
+    print(needed_message_id)
+    if needed_message_id:
+        message = await generator.get_message(email, needed_message_id)
+        print(message)
+        print("Don't worry, if message is 'Server Error' that's normal")
 
 if __name__ == "__main__":
     asyncio.run(generate_email_and_get_messages())

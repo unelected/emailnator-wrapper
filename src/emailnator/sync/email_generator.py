@@ -152,6 +152,81 @@ class EmailGenerator:
 
         return messages
 
+    def get_message_from_sender(
+            self,
+            sender: str,
+            email: str
+    ) -> str | None:
+        """
+        Retrieves the message content from a specific sender for the given email address.
+
+        Args:
+            sender (str): The email address or name of the sender. Must be a non-empty string.
+            email (str): The target email address to fetch the message for. Must be a valid email format.
+
+        Returns:
+            str | None: The message content if found, otherwise None.
+
+        Raises:
+            ValueError: If `sender` or `email` are invalid.
+            RuntimeError: If the asynchronous client is not initialized or an error occurs while fetching the message.
+        """
+        if not sender or not isinstance(sender, str):
+            raise ValueError("Sender must be a non-empty string.")
+
+        email_regex = r"^[^@]+@[^@]+\.[^@]+$"
+        if not email or not isinstance(
+            email,
+            str
+        ) or not re.match(email_regex, email):
+            raise ValueError("Email must be a valid email address.")
+
+        message = self._loop.run_until_complete(
+            self._async.get_message_from_sender(
+                sender,
+                email
+            )
+        )
+        return message
+
+    def parse_message_from_sender(
+            self,
+            messages: list[dict[str, str]],
+            sender: str
+    ) -> str | None:
+        """
+        Parses a list of messages and retrieves the content of the message sent by a specific sender.
+
+        Args:
+            messages (list[dict[str, str]]): A list of messages, where each message is a dictionary
+                                            containing keys like 'from', 'subject', 'time', etc.
+            sender (str): The email address or name of the sender to search for. Must be a non-empty string.
+
+        Returns:
+            str | None: The message content if a message from the specified sender is found, otherwise None.
+
+        Raises:
+            ValueError: If `messages` is empty or not a list of dictionaries, or if `sender` is invalid.
+            RuntimeError: If the asynchronous client is not initialized or an error occurs during parsing.
+        """
+        # Validation
+        if not isinstance(
+            messages,
+            list
+        ) or not all(isinstance(m, dict) for m in messages):
+            raise ValueError("Messages must be a list of dictionaries.")
+
+        if not sender or not isinstance(sender, str):
+            raise ValueError("Sender must be a non-empty string.")
+
+        message = self._loop.run_until_complete(
+            self._async.parse_message_from_sender(
+                messages,
+                sender,
+            )
+        )
+        return message
+
     def get_message(self, email: str, message_id: str) -> str:
         """
         Retrieve a specific message for the given email synchronously.
