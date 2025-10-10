@@ -4,7 +4,6 @@
 [![PyPI](https://img.shields.io/pypi/v/emailnator-wrapper.svg?color=blue)](https://pypi.org/project/emailnator-wrapper/)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Docs](https://img.shields.io/badge/docs-online-success)](https://emailnator-wrapper.readthedocs.io/en/latest/)
-[![Tests](https://github.com/unelected/emailnator-wrapper/actions/workflows/tests.yml/badge.svg)](https://github.com/unelected/emailnator-wrapper/actions)
 
 Asynchronous and synchronous API wrapper for **EmailNator**.
 
@@ -216,6 +215,5 @@ See [LICENSE](./LICENSE) for full details.
 | Resource                  | URL                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------- |
 | 📘 Documentation          | [emailnator-wrapper.readthedocs.io](https://emailnator-wrapper.readthedocs.io/en/latest/) |
-| 🧪 Tests (GitHub Actions) | [CI Workflow](https://github.com/unelected/emailnator-wrapper/actions)                 |
 | 🐍 PyPI                   | [pypi.org/project/emailnator-wrapper](https://pypi.org/project/emailnator-wrapper/)       |
 
