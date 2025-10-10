@@ -1,42 +1,52 @@
-# emailnator\-wrapper
+
+# emailnator-wrapper
+
+[![PyPI](https://img.shields.io/pypi/v/emailnator-wrapper.svg?color=blue)](https://pypi.org/project/emailnator-wrapper/)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![Docs](https://img.shields.io/badge/docs-online-success)](https://emailnator-wrapper.readthedocs.io/en/latest/)
+[![Tests](https://github.com/yourusername/emailnator-wrapper/actions/workflows/tests.yml/badge.svg)](https://github.com/yourusername/emailnator-wrapper/actions)
 
 Asynchronous and synchronous API wrapper for **EmailNator**.
-Provides a small, well-typed SDK to generate temporary Gmail-style addresses and read incoming messages. Designed for both script usage and integration into larger automation/test suites.
+
+Provides a small, well-typed SDK to generate temporary Gmail-style addresses and read incoming messages.
+Designed for both standalone scripts and integration into automation or testing pipelines.
 
 ---
 
-## Features
+## 🚀 Features
 
-* Fully asynchronous core using `httpx.AsyncClient`.
-* Optional synchronous wrapper for blocking workflows.
-* Automatic XSRF token management (fetch, decode, refresh) via `XsrfManager`.
-* Async-aware initialization helpers (metaclasses / factories) so classes can expose `__ainit__`.
-* Async-safe singletons (`AsyncSingletonMeta`) where appropriate (HTTP client).
-* Configurable via YAML (`config.yaml`) with optional proxy support.
-* Clear, Google-style docstrings and type annotations.
+✅ Fully **asynchronous core** using `httpx.AsyncClient`
+✅ **Synchronous wrapper** for blocking workflows
+✅ Automatic **XSRF token** management via `XsrfManager`
+✅ Async-safe **singleton HTTP client** (`AsyncSingletonMeta`)
+✅ YAML-based **configurable setup** with optional proxy
+✅ Google-style **docstrings** and complete type hints
+✅ **Thoroughly tested** with `pytest` (`tests/sync`, `tests/asyncio`)
+
+📚 **Documentation:** [ReadTheDocs](https://emailnator-wrapper.readthedocs.io/en/latest/)
 
 ---
 
-## Requirements
+## 🧩 Requirements
 
-* Python 3.11+ (works on 3.13).
-* Dependencies (typical):
+* Python **3.11+** (tested on 3.13)
+* Dependencies:
 
   * `httpx`
   * `PyYAML`
-  * `pytest` / `pytest-asyncio` for tests
+  * (for tests) `pytest`, `pytest-asyncio`
 
 ---
 
-## Installation
+## 💾 Installation
 
 ```bash
-pip install email-wrapper
+pip install emailnator-wrapper
 ```
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 `emailnator/config/config.yaml` (example):
 
@@ -44,105 +54,48 @@ pip install email-wrapper
 BASE_URL: https://www.emailnator.com
 TIMEOUT: 15
 USE_HTTP2: true
-USER_AGENT: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0"
+USER_AGENT: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 GMAIL_CONFIG:
   - dotGmail
   - plusGmail
 PROXY: null
 ```
 
-**Notes**
+**Notes:**
 
-* `PROXY: null` sets `config.PROXY` to `None`. Do **not** use the literal string `"None"` — `httpx` will reject that as an invalid proxy URL.
-* Keep credentials / secrets out of the YAML in public repos.
+* Use `null` (not `"None"`) to disable proxies.
+* Never store credentials or secrets in YAML files.
 
 ---
 
-## Quickstart — Asynchronous (recommended)
+## 🚀 Quickstart — Asynchronous (recommended)
 
-Save the example below as `examples/async_example.py`.
+`examples/async_example.py`
 
 ```python
-# Copyright (C) 2025 unelected
-#
-# This file is part of account_generator.
-#
-# account_generator is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# account_generator is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with account_generator. If not, see
-# <https://www.gnu.org/licenses/>.
-
-"""
-Example usage of the asynchronous AsyncEmailGenerator.
-
-This script demonstrates:
-  1. Creating the asynchronous AsyncEmailGenerator (awaitable constructor).
-  2. Generating a single temporary email address.
-  3. Retrieving messages for that address.
-  4. Printing results.
-"""
 import asyncio
-
 from emailnator.asyncio.email_generator import AsyncEmailGenerator
 
-
-async def generate_email_and_get_messages() -> None:
-    """
-    Initialize the async generator, produce an email and fetch messages.
-    """
+async def main():
     generator = await AsyncEmailGenerator()
     email = await generator.generate_email()
     messages = await generator.get_messages(email)
     print(f"Email: {email}\nMessages: {messages}")
 
-
 if __name__ == "__main__":
-    asyncio.run(generate_email_and_get_messages())
+    asyncio.run(main())
 ```
 
 ---
 
-## Quickstart — Synchronous wrapper
+## ⚡ Quickstart — Synchronous Wrapper
 
-Save as `examples/sync_example.py`.
+`examples/sync_example.py`
 
 ```python
-# Copyright (C) 2025 unelected
-#
-# This file is part of account_generator.
-#
-# account_generator is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# account_generator is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with account_generator. If not, see
-# <https://www.gnu.org/licenses/>.
-
-"""
-Synchronous example using EmailGenerator wrapper.
-
-This demonstrates creating the blocking wrapper and using it to generate
-an email and retrieve messages in a non-async program.
-"""
 from emailnator.sync.email_generator import EmailGenerator
 
-def main() -> None:
+def main():
     gen = EmailGenerator()
     email = gen.generate_email()
     messages = gen.get_messages(email)
@@ -154,72 +107,115 @@ if __name__ == "__main__":
 
 ---
 
-## Public API overview
+## 📚 Public API Overview
 
-* `emailnator.asyncio.email_generator.AsyncEmailGenerator`
-  High-level async facade. Use `await AsyncEmailGenerator()`.
-
-* `emailnator.asyncio.generators.Generators`
-  Endpoint wrapper for `/generate-email`. Provides `generate_email()` and `generate_bulk_emails()`.
-
-* `emailnator.asyncio.message_getter.MessageGetter`
-  Fetch and parse messages for a given temporary email address.
-
-* `emailnator.asyncio.builders.AsyncEmailnatorClient`
-  HTTP client singleton (uses `AsyncSingletonMeta`). Exposes `get_client()`, `get_headers()`, `refresh_token()`.
-
-* `emailnator.asyncio.builders.helpers.xsrf_token_service.XsrfManager`
-  Encapsulates XSRF lifecycle: `ensure_token()`, `refresh()`, `get_token()`, `get_headers()`.
-
-* `emailnator.config.config`
-  Loads `config.yaml` to `config` object with attributes `BASE_URL`, `TIMEOUT`, `USE_HTTP2`, `USER_AGENT`, `GMAIL_CONFIG`, `PROXY`.
+| Component               | Description                                        |
+| ----------------------- | -------------------------------------------------- |
+| `AsyncEmailGenerator`   | High-level async interface. Awaitable constructor. |
+| `Generators`            | Wraps `/generate-email` endpoint (bulk + single).  |
+| `MessageGetter`         | Retrieves and parses inbox messages.               |
+| `AsyncEmailnatorClient` | Shared async HTTP client singleton.                |
+| `XsrfManager`           | Manages XSRF lifecycle and headers.                |
+| `config`                | Loads YAML into structured config attributes.      |
 
 ---
 
-## Behavior notes & gotchas
+## 🧩 Behavior Notes
 
-* **Await the constructor** if using metaclass-based `__ainit__`: `obj = await ClassName()`. If you forget `await`, you get a coroutine object with no attributes.
-* **Proxy value** in YAML must be `null` for no proxy. String `"None"` will break `httpx`.
-* **Cloudflare / Bot protection**: EmailNator may be behind challenges (403/419). Temporary addresses and token flows can be blocked by anti-bot measures — the library attempts to read `XSRF-TOKEN` cookie, but if the site requires JavaScript challenges, consider using a Playwright-based flow or proper proxies.
-* **Event loop management**: Avoid calling `asyncio.run()` inside already-running event loops. For synchronous wrapper, use a dedicated factory that creates its own loop safely.
-
----
-
-## Error handling & common troubleshooting
-
-* `coroutine object has no attribute '...'` — forgot `await` on constructor.
-* `RuntimeWarning: coroutine was never awaited` — coroutine was created and not awaited; search for returns of coroutines.
-* `ValueError: Unknown scheme for proxy URL "None"` — `config.PROXY` is the string `"None"`, fix YAML to `null` or code to coerce `None`.
-* HTTP 419 / Page Expired — XSRF token missing or expired; check `XsrfManager` and cookie extraction.
-* HTTP 403 Cloudflare — site-side bot protection.
+* Always **`await` the constructor** if using async metaclass (`await AsyncEmailGenerator()`).
+* YAML `PROXY: null` means *no proxy* — don’t use `"None"`.
+* Possible HTTP issues (`403`, `419`) may stem from **bot protection** — consider rotating proxies.
+* Avoid using `asyncio.run()` inside an already running loop.
 
 ---
 
-## Contributing
+## 🧪 Tests
 
-* Fork, branch `feature/...`, implement, add tests, open PR.
-* Keep changes backwards-compatible for public API unless you bump major version.
-* Follow project style: type annotations, Google-style docstrings, tests.
+Tests are divided into two categories:
+
+```
+tests/
+├── asyncio/
+│   ├── test_generators.py
+│   ├── test_message_getter.py
+│   └── test_email_generator.py
+└── sync/
+    ├── test_generators_sync.py
+    └── test_email_generator_sync.py
+```
+
+### Run all tests
+
+```bash
+pytest -v
+```
+
+### Run only async tests
+
+```bash
+pytest tests/asyncio -v
+```
+
+### Run only sync tests
+
+```bash
+pytest tests/sync -v
+```
+
+All tests use `pytest-asyncio` and can be executed locally or in CI (GitHub Actions workflow provided).
 
 ---
 
-## License
+## 📘 Documentation
 
-This project is licensed under GNU Affero General Public License v3 (AGPL-3.0).
+Full API documentation is available on ReadTheDocs:
+-> [https://emailnator-wrapper.readthedocs.io/en/latest/](https://emailnator-wrapper.readthedocs.io/en/latest/)
 
----
+You’ll find:
 
-## Files to include in the repo
-
-* `README.md` (this file)
-* `pyproject.toml` / `setup.cfg` with dependencies and dev extras
-* `emailnator/config/config.yaml` example
-* `examples/async_example.py`
-* `examples/sync_example.py`
-* `tests/` with unit & async tests
+* Installation guide
+* API references (async & sync layers)
+* Architecture overview
+* Examples & testing guide
 
 ---
 
-## Contact
+## ⚠️ Troubleshooting
 
-Open an issue or submit a pull request for help, bug reports, or enhancements.
+| Issue                                             | Cause / Fix                                         |
+| ------------------------------------------------- | --------------------------------------------------- |
+| `coroutine object has no attribute`               | Forgot to `await` async constructor.                |
+| `RuntimeWarning: coroutine was never awaited`     | Created coroutine but didn’t await it.              |
+| `ValueError: Unknown scheme for proxy URL "None"` | Fix YAML: use `null` instead of `"None"`.           |
+| HTTP 419 / “Page Expired”                         | Missing or expired XSRF token — refresh it.         |
+| HTTP 403                                          | Cloudflare or bot protection triggered — use proxy. |
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository.
+2. Create a feature branch (`feature/my-change`).
+3. Add or update tests under `tests/`.
+4. Open a Pull Request.
+
+✅ Follow code style: type hints, async-safe patterns, Google-style docstrings.
+✅ Keep public API backward-compatible when possible.
+
+---
+
+## 📄 License
+
+Licensed under the **GNU Affero General Public License v3 (AGPL-3.0)**.
+See [LICENSE](./LICENSE) for full details.
+
+---
+
+## 🌐 Project Links
+
+| Resource                  | URL                                                                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| 📘 Documentation          | [emailnator-wrapper.readthedocs.io](https://emailnator-wrapper.readthedocs.io/en/latest/) |
+| 🧪 Tests (GitHub Actions) | [CI Workflow](https://github.com/yourusername/emailnator-wrapper/actions)                 |
+| 🐍 PyPI                   | [pypi.org/project/emailnator-wrapper](https://pypi.org/project/emailnator-wrapper/)       |
+
