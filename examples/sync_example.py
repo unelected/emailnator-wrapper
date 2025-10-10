@@ -33,6 +33,12 @@ from emailnator.sync.email_generator import EmailGenerator
 
 generator: EmailGenerator = EmailGenerator()
 email: str = generator.generate_email()
-messages: list[str] = generator.get_messages(email)
+messages: list[dict[str, str]] = generator.get_messages(email)
 print("Generated:", email)
 print("Messages:", messages)
+needed_message = messages[0]
+message_id = needed_message["messageID"]
+print(message_id)
+message = generator.get_message(email, message_id)
+print(message)
+print("Don't worry, if message is 'Server Error' that's normal")

@@ -16,4 +16,4 @@
 # along with account_generator. If not, see
 # <https://www.gnu.org/licenses/>.
 
-__version__: str = "1.1.2"
+__version__: str = "2.0.0"

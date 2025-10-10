@@ -27,10 +27,12 @@ Typical Usage Example:
     import httpx
     from helpers import Helpers
     resp = httpx.Response(200, content=b'{"key": ["value"]}')
-    Helpers.parse_json_response(resp, "get-items")
-    {'key': ['value']}
+    Helpers.parse_email_response(resp, "get-items")
+    ['value']
 """
 import httpx
+
+from typing import Any
 
 
 class Parser:
@@ -46,39 +48,82 @@ class Parser:
         None
     """
     @staticmethod
-    async def parse_json_response(
-            response: httpx.Response,
-            context: str
+    async def parse_email_response(
+        response: httpx.Response,
+        context: str
     ) -> list[str]:
         """
-        Parse the JSON content from an HTTP response.
+        Parse and extract email addresses from an HTTP JSON response.
 
-        This function checks the HTTP response for errors and attempts to parse
-        its content as JSON. If the response indicates an error (status code >= 400)
-        or the content is not valid JSON, a RuntimeError is raised.
+        This coroutine validates the HTTP response and attempts to parse its content
+        as JSON. It expects the JSON to contain an "email" field, which should be a
+        list of strings (email addresses).
 
         Args:
             response (httpx.Response): The HTTP response object to parse.
-            context (str): A string describing the context of the request, used
-                in error messages.
+            context (str): A short description of the request context, used for
+                more informative error messages.
 
         Returns:
-            list[str]: The writed JSON content as a dictionary
-                mapping strings to lists of strings.
+            list[str]: A list of email addresses extracted from the response.
 
         Raises:
             RuntimeError: If the response status code is 400 or higher.
             RuntimeError: If the response content is not valid JSON.
+            RuntimeError: If the "email" field is missing or not a list of strings.
         """
         if response.status_code >= 400:
-            raise RuntimeError(
-                f"{context} returned {response.status_code}: {response.text}"
-            )
+            raise RuntimeError(f"{context} returned {response.status_code}: {response.text}")
+
         try:
-            if "messageData" in response.text:
-                return response.json().get("messageData", "")
-            return response.json().get("email", "")
+            data: Any = response.json()
         except ValueError:
-            raise RuntimeError(
-                f"{context} response is not valid JSON: {response.text[:400]}"
-            )
+            raise RuntimeError(f"{context} response is not valid JSON: {response.text[:400]}")
+
+        emails = data.get("email")
+
+        if isinstance(emails, str):
+            return [emails]
+        if isinstance(emails, list) and all(isinstance(e, str) for e in emails):
+            return emails
+
+        raise RuntimeError(f"{context} response does not contain valid 'email' data: {response.text[:400]}")
+
+    @staticmethod
+    async def parse_message_response(
+        response: httpx.Response,
+        context: str
+    ) -> list[dict[str, str]]:
+        """
+        Parse and validate a message list response from the API.
+
+        This coroutine checks the HTTP response for errors and attempts to parse its
+        content as JSON. It extracts the "messageData" field, which is expected to
+        contain a list of message objects.
+
+        Args:
+            response (httpx.Response): The HTTP response object to parse.
+            context (str): Description of the request context, used in error messages.
+
+        Returns:
+            list[dict[str, str]]: A list of message dictionaries parsed from the response.
+
+        Raises:
+            RuntimeError: If the response has a status code >= 400.
+            RuntimeError: If the response body is not valid JSON.
+            RuntimeError: If the JSON structure does not contain a valid "messageData" list.
+        """
+        if response.status_code >= 400:
+            raise RuntimeError(f"{context} returned {response.status_code}: {response.text}")
+
+        try:
+            data: Any = response.json()
+        except ValueError:
+            raise RuntimeError(f"{context} response is not valid JSON: {response.text[:400]}")
+
+        message_data = data.get("messageData")
+
+        if not isinstance(message_data, list) or not all(isinstance(m, dict) for m in message_data):
+            raise RuntimeError(f"{context} response does not contain valid 'messageData': {response.text[:400]}")
+
+        return message_data

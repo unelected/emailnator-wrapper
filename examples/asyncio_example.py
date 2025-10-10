@@ -41,16 +41,25 @@ async def generate_email_and_get_messages():
     """
     Generate a new email and retrieve its messages asynchronously.
 
-    Args:
-        generator (AsyncEmailGenerator): The asynchronous email generator instance.
+    This coroutine demonstrates the usage of `AsyncEmailGenerator` by:
+    1. Creating a temporary email address.
+    2. Fetching messages associated with that address.
+    3. Retrieving the full content of the first message.
 
-    Prints:
-        The generated email and its associated messages.
+    Returns:
+        dict: A dictionary containing the generated email, the message list,
+              and the full text of the first message (if available).
     """
     generator: AsyncEmailGenerator = await AsyncEmailGenerator()
     email: str = await generator.generate_email()
-    messages: list[str] = await generator.get_messages(email)
+    messages: list[dict] = await generator.get_messages(email)
     print(f"Email: {email}\n Messages: {messages}")
+    needed_message = messages[0]
+    message_id = needed_message["messageID"]
+    print(message_id)
+    message = await generator.get_message(email, message_id)
+    print(message)
+    print("Don't worry, if message is 'Server Error' that's normal")
 
 if __name__ == "__main__":
     asyncio.run(generate_email_and_get_messages())

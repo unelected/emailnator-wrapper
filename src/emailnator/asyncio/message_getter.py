@@ -62,20 +62,27 @@ class MessageGetter(metaclass=AsyncInitMeta):
         self,
         email: str,
         base_url: str = config.BASE_URL,
-    ) -> list[str]:
+    ) -> list[dict[str, str]]:
         """
-        Sends a POST request to retrieve a list of messages associated with the specified email.
+        Asynchronously retrieve a list of messages associated with the given email address.
+
+        This coroutine sends a POST request to the `/message-list` endpoint to fetch
+        metadata about messages linked to the specified email. The result is parsed
+        and returned as a list of message dictionaries.
 
         Args:
             email (str): The email address for which to fetch the message list.
             base_url (str, optional): The base URL of the API. Defaults to `config.BASE_URL`.
 
         Returns:
-            list[str]: The lists of message strings.
+            list[dict[str, str]]: A list of message metadata dictionaries. Each dictionary
+            typically contains keys such as 'messageID', 'from', 'subject', and 'time'.
 
         Raises:
-            httpx.HTTPStatusError: If the HTTP request returns an unsuccessful status code.
-            ValueError: If the response cannot be parsed as JSON or is missing the expected 'message-list' key.
+            AssertionError: If the HTTP client (`self.client`) is not initialized.
+            httpx.RequestError: If a network-related error occurs.
+            httpx.HTTPStatusError: If the HTTP response indicates a failed request.
+            RuntimeError: If the response cannot be parsed or is missing expected data.
         """
         get_messages_endpoint: str = "/message-list"
         final_url: str = base_url + get_messages_endpoint
@@ -86,4 +93,44 @@ class MessageGetter(metaclass=AsyncInitMeta):
             headers=self.headers,
             json={"email": email}
         )
-        return await self.parser.parse_json_response(response, "message-list")
+        return await self.parser.parse_message_response(response, "message-list")
+
+    async def get_message(
+        self,
+        email: str,
+        message_id: str,
+        base_url: str = config.BASE_URL,
+    ) -> str:
+        """
+        Asynchronously retrieve the full content of a specific email message from the API.
+
+        This coroutine sends a POST request to the `/message-list` endpoint with the
+        given email and message ID, and returns the raw response text (typically the
+        HTML content of the message).
+
+        Args:
+            email (str): The email address from which to retrieve the message.
+            message_id (str): The unique identifier of the message to fetch.
+            base_url (str, optional): The base URL of the API. Defaults to `config.BASE_URL`.
+
+        Returns:
+            str: The raw message content as returned by the server (usually HTML).
+
+        Raises:
+            AssertionError: If the HTTP client (`self.client`) is not initialized.
+            httpx.RequestError: If there is a network or connection issue.
+            httpx.HTTPStatusError: If the response status code indicates an error.
+        """
+        get_messages_endpoint: str = "/message-list"
+        final_url: str = base_url + get_messages_endpoint
+
+        assert self.client is not None, "No client"
+        response: httpx.Response = await self.client.post(
+            final_url,
+            headers=self.headers,
+            json={
+                "email": email,
+                "messageID": message_id
+            }
+        )
+        return response.text

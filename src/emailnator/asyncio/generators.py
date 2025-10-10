@@ -107,7 +107,7 @@ class Generators(metaclass=AsyncInitMeta):
             json={email_key: options}
         )
         assert self.parser is not None, "No helpers"
-        return await self.parser.parse_json_response(
+        return await self.parser.parse_email_response(
             response,
             "generate-email"
         )
@@ -149,7 +149,7 @@ class Generators(metaclass=AsyncInitMeta):
             }
         )
         assert self.parser is not None, "No helpers"
-        return await self.parser.parse_json_response(
+        return await self.parser.parse_email_response(
             response,
             "generate-email"
         )

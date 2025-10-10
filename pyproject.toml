@@ -5,7 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "emailnator-wrapper"
 dynamic = ["version", "readme"]
-keywords = ["email generator", "emailnator", "gmailnator", "gmail generator"]
+keywords = [
+  "email generator",
+  "emailnator",
+  "gmailnator",
+  "gmail generator",
+  "gmail",
+  "email",
+  "tempmail",
+  "api",
+  "temporary",
+  "generator",
+  "emailnator api",
+  "gmailnator api",
+  "web api",
+  "web",
+  "bulk emails",
+  "emails",
+  "mail",
+  "mail generator"
+]
 description = "A Python wrapper for the Emailnator service providing both synchronous and asynchronous APIs."
 requires-python = ">=3.10"
 license = "AGPL-3.0-or-later"

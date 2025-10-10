@@ -36,6 +36,8 @@ Typical usage example:
         messages = await generator.get_messages(email)
         print(email, messages)
 """
+import re
+
 from typing import Literal
 
 from emailnator.asyncio.generators import Generators
@@ -80,29 +82,73 @@ class AsyncEmailGenerator(metaclass=AsyncInitMeta):
         Raises:
             RuntimeError: If the generator fails to return at least one email.
         """
-        return (await self._generators.generate_email())[0]
+        emails = await self._generators.generate_email()
 
-    async def get_messages(self, email: str) -> list[str]:
+        if not emails or not isinstance(emails, list):
+            raise RuntimeError("Email generator returned no valid addresses.")
+
+        return emails[0]
+
+    async def get_messages(self, email: str) -> list[dict[str, str]]:
         """
-        Retrieve messages for a given email address asynchronously.
+        Asynchronously retrieve all messages associated with the given email address.
 
-        This method queries the `MessageGetter` instance to fetch all
-        messages associated with the provided email.
+        This coroutine validates the email address, delegates the retrieval to the
+        underlying `MessageGetter` instance, and returns a list of message metadata
+        dictionaries.
 
         Args:
-            email (str): The email address to fetch messages for.
+            email (str): The email address for which to fetch messages.
 
         Returns:
-            list[str]: A list of message contents linked to the email.
+            list[dict[str, str]]: A list of message dictionaries, each typically
+            containing keys such as 'messageID', 'from', 'subject', and 'time'.
 
         Raises:
+            ValueError: If the provided email address is invalid or empty.
             RuntimeError: If message retrieval fails or the response is invalid.
         """
+        if not isinstance(email, str) or not email.strip():
+            raise ValueError("Email must be a non-empty string.")
+
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[a-zA-Z0-9]+$", email):
+            raise ValueError(f"Invalid email format: {email}")
+
         return await self._message_getter.get_message_list(email)
 
+    async def get_message(self, email: str, message_id: str) -> str:
+        """
+        Asynchronously retrieve the full content of a specific email message.
+
+        This coroutine validates its inputs, delegates the retrieval to the
+        underlying message getter, and returns the message body as a string
+        (typically HTML or plain text).
+
+        Args:
+            email (str): The email address associated with the message.
+            message_id (str): The unique identifier of the message to fetch.
+
+        Returns:
+            str: The content of the message, usually in HTML or plain text format.
+
+        Raises:
+            ValueError: If the email or message_id is invalid or empty.
+            RuntimeError: If message retrieval fails.
+        """
+        if not isinstance(email, str) or not email.strip():
+            raise ValueError("Email must be a non-empty string.")
+
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[a-zA-Z0-9]+$", email):
+            raise ValueError(f"Invalid email format: {email}")
+
+        if not isinstance(message_id, str) or not message_id.strip():
+            raise ValueError("Message ID must be a non-empty string.")
+
+        return await self._message_getter.get_message(email, message_id)
+
     async def generate_bulk_emails(
-            self,
-            emails_number: Literal["100", "200", "300"] = "100"
+        self,
+        emails_number: Literal["100", "200", "300"] = "100"
     ) -> list[str]:
         """
         Generate multiple email addresses asynchronously.
@@ -121,6 +167,24 @@ class AsyncEmailGenerator(metaclass=AsyncInitMeta):
             list[str]: A list of newly generated email addresses.
 
         Raises:
+            ValueError: If `emails_number` is not one of the supported values.
             RuntimeError: If the generator fails to return a valid list of emails.
         """
-        return await self._generators.generate_bulk_emails(emails_number)
+        if emails_number not in {"100", "200", "300"}:
+            raise ValueError(
+                f"Invalid emails_number '{emails_number}'. Must be one of '100', '200', or '300'."
+            )
+
+        emails: list[str] = await self._generators.generate_bulk_emails(
+            emails_number
+        )
+
+        if not isinstance(emails, list) or not all(
+            isinstance(e, str) for e in emails
+        ):
+            raise RuntimeError("Email generator returned invalid data type.")
+
+        if not emails:
+            raise RuntimeError("Email generator returned an empty list.")
+
+        return emails
