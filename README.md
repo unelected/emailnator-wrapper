@@ -2,7 +2,7 @@
 # emailnator-wrapper
 
 [![PyPI](https://img.shields.io/pypi/v/emailnator-wrapper.svg?color=blue)](https://pypi.org/project/emailnator-wrapper/)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 [![Docs](https://img.shields.io/badge/docs-online-success)](https://emailnator-wrapper.readthedocs.io/en/latest/)
 
 Asynchronous and synchronous API wrapper for **EmailNator**.
