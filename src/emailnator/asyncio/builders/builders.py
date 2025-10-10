@@ -128,13 +128,7 @@ class AsyncEmailnatorClient(metaclass=AsyncSingletonMeta):
                 was raised, else None.
         """
         logger.debug(
-            f"Builders service was closed exception type: {
-            exc_type
-            }, exception: {
-            exc
-            }, traceback: {
-            tb
-            }"
+            f"Builders service was closed exception type: {exc_type}, exception: {exc}, traceback: {tb}"
         )
         await self.close()
 
