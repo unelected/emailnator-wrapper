@@ -47,6 +47,13 @@ dependencies = [
 Homepage = "https://github.com/unelected/emailnator-wrapper"
 Repository = "https://github.com/unelected/emailnator-wrapper.git"
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+python_classes = ["Test*"]
+
 [tool.setuptools]
 package-dir = { "" = "src" }
 
